@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\AuthenticateRequest;
-use App\Http\Requests\API\SignupRequest;
+use App\Http\Requests\API\Auth\AuthenticateRequest;
+use App\Http\Requests\API\Auth\SignupRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    public function signup(SignupRequest $request)
+    public function signup(SignupRequest $request): JsonResponse
     {
         $user = User::query()->create([
             'name' => $request->name,
@@ -22,34 +22,34 @@ class AuthController extends Controller
 
         $token = $user->createToken($request->ip())->plainTextToken;
 
-        return response()->json([
+        return json([
             'token' => $token,
             'token_type' => 'Bearer',
         ]);
     }
 
-    public function authenticate(AuthenticateRequest $request)
+    public function authenticate(AuthenticateRequest $request): JsonResponse
     {
         if (! auth()->attempt($request->only(['phone', 'password']), $request->remember_me)) {
             return response()->json([
-                'message' => 'Неверно введен логин или пароль'
+                'message' => 'Неверно введен логин или пароль',
             ], 401);
         }
 
         $token = auth()->user()->createToken($request->ip())?->plainTextToken;
 
-        return response()->json([
+        return json([
             'token' => $token,
             'token_type' => 'Bearer',
         ]);
     }
 
-    public function logout()
+    public function logout(): JsonResponse
     {
         auth()->user()->tokens()->delete();
 
-        return response()->json([
-            'message' => 'Вы вышли из аккаунта'
+        return json([
+            'message' => 'Вы вышли из аккаунта',
         ]);
     }
 }

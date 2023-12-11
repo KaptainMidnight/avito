@@ -1,11 +1,19 @@
 <?php
 
-namespace App\Http\Requests\API;
+namespace App\Http\Requests\API\Advertisement;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AuthenticateRequest extends FormRequest
+class UpdateAdvertisementRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return false;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -14,9 +22,7 @@ class AuthenticateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required', 'string'],
-            'password' => ['required', 'string'],
-            'remember_me' => ['sometimes', 'boolean']
+            //
         ];
     }
 }
